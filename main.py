@@ -29,7 +29,7 @@ def find_index_post(id):
         if p['id'] == id:
             return i
 
-
+# READ
 @app.get("/")
 async def root():
     return {"message": "Hello, world!"}
@@ -37,7 +37,6 @@ async def root():
 @app.get("/posts")
 def get_posts():
     return {"message": my_posts}
-
 
 @app.get("/posts/{id}")
 def get_post(id: int, response:Response):
@@ -51,6 +50,7 @@ def get_post(id: int, response:Response):
 
 
 
+# CREATE
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
 def create_post(post: Post):
     post_dict = post.dict()
@@ -59,6 +59,8 @@ def create_post(post: Post):
     return {"data": post_dict}
 
 
+
+# UPDATE
 @app.put("/posts/{id}")
 def update_post(id: int, post: Post):
     print(post)
@@ -72,6 +74,8 @@ def update_post(id: int, post: Post):
     return {"data": post_dict}
 
 
+
+# DELETE 
 @app.delete("/posts/{id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_post(id: int):
     index = find_index_post(id)
