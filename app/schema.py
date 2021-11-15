@@ -4,6 +4,7 @@ from pydantic import BaseModel
 
 # Pydantic Schema Model
 class PostBase(BaseModel):
+    id: int
     title: str
     content: str
     published: bool = True
@@ -11,11 +12,8 @@ class PostBase(BaseModel):
 class PostCreate(PostBase):
     pass
 
-class Post(BaseModel):
-    id: int
-    title: str
-    content: str
-    published: bool
+class Post(PostBase):
+    
     created_at: datetime
 
     class Config:
