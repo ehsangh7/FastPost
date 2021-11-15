@@ -1,14 +1,23 @@
 from typing import Optional
-from fastapi import FastAPI, Response, status, HTTPException
+from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
 from pydantic import BaseModel
 from random import randrange
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
+from . import models
+from .database import engine, get_db
+from sqlalchemy.orm import Session
+
+models.Base.metadata.create_all(bind=engine)
 
 
 app = FastAPI()
+
+
+
+
 
 class Post(BaseModel):
     title: str
@@ -16,18 +25,18 @@ class Post(BaseModel):
     published: bool = True
     rating: Optional[int] = None
     
-while True:
-    try:
-        conn = psycopg2.connect(host='localhost', database='fastpost',
-                                user='exsan', password='ehs@n2404',
-                                cursor_factory=RealDictCursor)
-        cursor = conn.cursor()
-        print("database connection successfull")
-        break
-    except Exception as error:
-        print("Connection failed")
-        print("Error: ", error)
-        time.sleep(2)
+# while True:
+#     try:
+#         conn = psycopg2.connect(host='localhost', database='fastpost',
+#                                 user='exsan', password='ehs@n2404',
+#                                 cursor_factory=RealDictCursor)
+#         cursor = conn.cursor()
+#         print("database connection successfull")
+#         break
+#     except Exception as error:
+#         print("Connection failed")
+#         print("Error: ", error)
+#         time.sleep(2)
 
 
 my_posts = [{"title": "title of post 1", "content": "content of post 1", "id": 1},
@@ -49,6 +58,13 @@ def find_index_post(id):
 @app.get("/")
 async def root():
     return {"message": "Hello, world!"}
+
+@app.get("/sqlalchemy")
+def test_posts(db: Session = Depends(get_db)):
+
+    posts = db.query(models.Post).all()
+    return {"data": posts}
+
 
 @app.get("/posts")
 def get_posts():
