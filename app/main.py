@@ -8,7 +8,6 @@ import time
 from . import models, schema
 from .database import engine, get_db
 from sqlalchemy.orm import Session
-from 
 models.Base.metadata.create_all(bind=engine)
 
 
@@ -60,7 +59,7 @@ def get_posts(db: Session = Depends(get_db)):
     # posts = cursor.fetchall()
 
     posts = db.query(models.Post).all()
-    return {"data": posts}
+    return posts
 
 @app.get("/posts/{id}")
 def get_post(id: int, db: Session = Depends(get_db)):
@@ -75,13 +74,13 @@ def get_post(id: int, db: Session = Depends(get_db)):
                             detail=f"couldn't find post {id}")
         # response.status_code = status.HTTP_404_NOT_FOUND
         # return {"message": f"couldn't find post {id}"}
-    return {"post_detail": post}
+    return post
 
 
 
 # CREATE
 @app.post("/posts", status_code=status.HTTP_201_CREATED)
-def create_post(post: schema.Post,db: Session = Depends(get_db)):
+def create_post(post: schema.PostCreate,db: Session = Depends(get_db)):
     # cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING *""",
     # (post.title, post.content, post.published))
     # new_post = cursor.fetchone()
@@ -95,13 +94,13 @@ def create_post(post: schema.Post,db: Session = Depends(get_db)):
     db.commit()
     db.refresh(new_post)
 
-    return {"data": new_post}
+    return new_post
 
 
 
 # UPDATE
 @app.put("/posts/{id}")
-def update_post(id: int, post: schema.Post, db: Session = Depends(get_db)):
+def update_post(id: int, post: schema.PostCreate, db: Session = Depends(get_db)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
     # (post.title, post.content, post.published, str(id)))
     
@@ -121,7 +120,7 @@ def update_post(id: int, post: schema.Post, db: Session = Depends(get_db)):
     
     db.commit()
 
-    return {"data": updated_post.first()}
+    return updated_post.first()
 
 
 
