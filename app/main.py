@@ -1,11 +1,12 @@
-from typing import Optional, List
+
 from fastapi import FastAPI, Response, status, HTTPException, Depends
 from fastapi.params import Body
 from random import randrange
+from typing import Optional, List
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
-from . import models, schema, utils, database
+from . import models, schema, utils, database, auth
 from sqlalchemy.orm import Session
 from .routers import post, user
 
@@ -51,6 +52,8 @@ def find_index_post(id):
 
 app.include_router(post.router)
 app.include_router(user.router)
+app.include_router(auth.router)
+
 
 # READ
 @app.get("/")
