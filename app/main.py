@@ -79,7 +79,7 @@ def get_post(id: int, db: Session = Depends(get_db)):
 
 
 # CREATE
-@app.post("/posts", status_code=status.HTTP_201_CREATED)
+@app.post("/posts", status_code=status.HTTP_201_CREATED, response_model = schema.Post)
 def create_post(post: schema.PostCreate,db: Session = Depends(get_db)):
     # cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING *""",
     # (post.title, post.content, post.published))
