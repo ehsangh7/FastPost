@@ -7,6 +7,10 @@ name = "pypi"
 fastapi = {extras = ["all"], version = "*"}
 wheel = "*"
 psycopg2-binary = "*"
+sqlalchemy = "*"
+pydantic = "*"
+python-dotenv = "*"
+alembic = "*"
 
 [dev-packages]
 
