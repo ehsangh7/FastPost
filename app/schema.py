@@ -4,7 +4,6 @@ from typing import  Optional
 
 # Pydantic Schema Model
 class PostBase(BaseModel):
-    id: int
     title: str
     content: str
     published: bool = True
@@ -13,7 +12,7 @@ class PostCreate(PostBase):
     pass
 
 class Post(PostBase):
-    
+    id: int
     created_at: datetime
 
     class Config:
@@ -40,5 +39,5 @@ class Token(BaseModel):
     token_type: str
 
 class TokenData(BaseModel):
-    id: Optional[str]
+    id: Optional[str] = None
 
