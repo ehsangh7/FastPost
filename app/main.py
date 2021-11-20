@@ -6,9 +6,9 @@ from typing import Optional, List
 import psycopg2
 from psycopg2.extras import RealDictCursor
 import time
-from . import models, schema, utils, database, auth
+from . import models, schema, utils, database
 from sqlalchemy.orm import Session
-from .routers import post, user
+from .routers import post, user, auth
 
 models.Base.metadata.create_all(bind=database.engine)
 
