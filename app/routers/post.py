@@ -10,11 +10,11 @@ router = APIRouter(
 
 
 @router.get("/", response_model = List[schema.Post])
-def get_posts(db: Session = Depends(database.get_db)):
+def get_posts(db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute(""" SELECT * FROM posts""")
     # posts = cursor.fetchall()
 
-    posts = db.query(models.Post).all()
+    posts = db.query(models.Post).filter(models.Post.owner_id == current_user.id).all()
     return posts
 
 @router.get("/{id}", response_model = schema.Post)
