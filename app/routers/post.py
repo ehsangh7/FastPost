@@ -47,7 +47,7 @@ def create_post(post: schema.PostCreate,db: Session = Depends(database.get_db), 
     # new_post = models.Post(title=post.title, content=post.content, published=post.published)
     
     print(current_user.email)
-    new_post = models.Post(**post.dict())
+    new_post = models.Post(owner_id=current_user.id,**post.dict())
 
     db.add(new_post) 
     db.commit()
@@ -59,7 +59,9 @@ def create_post(post: schema.PostCreate,db: Session = Depends(database.get_db), 
 
 # UPDATE
 @router.put("/{id}", response_model = schema.Post)
-def update_post(id: int, post: schema.PostCreate, db: Session = Depends(database.get_db)):
+def update_post(id: int, post: schema.PostCreate, 
+                db: Session = Depends(database.get_db), 
+                current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
     # (post.title, post.content, post.published, str(id)))
     
@@ -74,6 +76,9 @@ def update_post(id: int, post: schema.PostCreate, db: Session = Depends(database
     
     if updated_post.first() is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post {id} does not exists!!!")
+    print(updated_post)
+    if updated_post.first().owner_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Not Authorized")
     
     updated_post.update(post.dict(), synchronize_session=False)
     
@@ -99,6 +104,9 @@ def delete_post(id: int, db: Session = Depends(database.get_db), current_user: i
     post = db.query(models.Post).filter(models.Post.id == id)
     if post.first() is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=f"post {id} does not exists!!!")
+
+    if post.owner_id != oauth2.get_current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=f"Not Authorized")
 
     post.delete(synchronize_session=False)
     db.commit()
