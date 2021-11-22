@@ -19,7 +19,7 @@ def get_posts(db: Session = Depends(database.get_db),
               ):
     # cursor.execute(""" SELECT * FROM posts""")
     # posts = cursor.fetchall()
-    print("sadfas",search)
+    
     #posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
 
     # Raw Sql
@@ -31,7 +31,6 @@ def get_posts(db: Session = Depends(database.get_db),
                                             ).filter(models.Post.title.contains(search)
                                             ).limit(limit).offset(skip
                                             ).all()
-    print("results", results)
     
     return results
 
