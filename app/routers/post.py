@@ -10,11 +10,16 @@ router = APIRouter(
 
 
 @router.get("/", response_model = List[schema.Post])
-def get_posts(db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
+def get_posts(db: Session = Depends(database.get_db), 
+              current_user: int = Depends(oauth2.get_current_user),
+              search: Optional[str] = "",
+              limit: int = 10,
+              skip: int = 0,
+              ):
     # cursor.execute(""" SELECT * FROM posts""")
     # posts = cursor.fetchall()
-
-    posts = db.query(models.Post).filter(models.Post.owner_id == current_user.id).all()
+    print("sadfas",search)
+    posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
     return posts
 
 @router.get("/{id}", response_model = schema.Post)
@@ -37,7 +42,9 @@ def get_post(id: int, db: Session = Depends(database.get_db), current_user: int 
 
 # CREATE
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model = schema.Post)
-def create_post(post: schema.PostCreate,db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
+def create_post(post: schema.PostCreate,
+                db: Session = Depends(database.get_db), 
+                current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute(""" INSERT INTO posts (title, content, published) VALUES (%s, %s, %s) RETURNING *""",
     # (post.title, post.content, post.published))
     # new_post = cursor.fetchone()
@@ -59,7 +66,8 @@ def create_post(post: schema.PostCreate,db: Session = Depends(database.get_db), 
 
 # UPDATE
 @router.put("/{id}", response_model = schema.Post)
-def update_post(id: int, post: schema.PostCreate, 
+def update_post(id: int, 
+                post: schema.PostCreate, 
                 db: Session = Depends(database.get_db), 
                 current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute("""UPDATE posts SET title = %s, content = %s, published = %s WHERE id = %s RETURNING *""",
@@ -90,7 +98,9 @@ def update_post(id: int, post: schema.PostCreate,
 
 # DELETE 
 @router.delete("/{id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_post(id: int, db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
+def delete_post(id: int,
+                db: Session = Depends(database.get_db), 
+                current_user: int = Depends(oauth2.get_current_user)):
 
     # cursor.execute(""" DELETE FROM posts WHERE id = %s RETURNING *""", (str(id),))
     # deleted_post = cursor.fetchone()
