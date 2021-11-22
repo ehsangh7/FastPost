@@ -3,7 +3,8 @@ from fastapi import FastAPI
 from . import models, database
 from .routers import post, user, auth, vote
 
-models.Base.metadata.create_all(bind=database.engine)
+# with alembic dont need it
+# models.Base.metadata.create_all(bind=database.engine)
 
 
 app = FastAPI()
