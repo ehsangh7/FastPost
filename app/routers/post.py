@@ -21,21 +21,33 @@ def get_posts(db: Session = Depends(database.get_db),
     # posts = cursor.fetchall()
     print("sadfas",search)
     #posts = db.query(models.Post).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
-    
-    results = db.query(models.Post, func.count(models.Vote.post_id).label("votes")).join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True).group_by(models.Post.id).filter(models.Post.title.contains(search)).limit(limit).offset(skip).all()
+
+    # Raw Sql
+    # select posts.* , COUNT(votes.post_id)  from posts LEFT JOIN votes ON posts.id = votes.post_id group by posts.id;
+    results = db.query(models.Post, func.count(models.Vote.post_id)
+                                            .label("votes")
+                                            ).join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True
+                                            ).group_by(models.Post.id
+                                            ).filter(models.Post.title.contains(search)
+                                            ).limit(limit).offset(skip
+                                            ).all()
     print("results", results)
     
     return results
 
-@router.get("/{id}", response_model = schema.Post)
+@router.get("/{id}", response_model = schema.PostOut)
 def get_post(id: int, db: Session = Depends(database.get_db), current_user: int = Depends(oauth2.get_current_user)):
     # cursor.execute("""SELECT * from posts WHERE id = %s """, (str(id),))
     # post = cursor.fetchone()
 
     # ORM
     print("userId",current_user)
-    post = db.query(models.Post).filter(models.Post.id == id).first()
-
+    #post = db.query(models.Post).filter(models.Post.id == id).first()
+    post = db.query(models.Post, func.count(models.Vote.post_id)
+                                            .label("votes")
+                                            ).join(models.Vote, models.Vote.post_id == models.Post.id, isouter=True
+                                            ).group_by(models.Post.id
+                                            ).filter(models.Post.id == id).first()
     if not post:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, 
                             detail=f"couldn't find post {id}")
