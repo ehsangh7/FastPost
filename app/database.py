@@ -24,33 +24,33 @@ def get_db():
 
 
 
-while True:
-    try:
-        conn = psycopg2.connect(host='localhost', database='fastpost',
-                                user='exsan', password='ehsan2404',
-                                cursor_factory=RealDictCursor)
-        cursor = conn.cursor()
-        print("database connection successfull")
-        break
-    except Exception as error:
-        print("Connection failed")
-        print("Error: ", error)
-        time.sleep(2)
+# while True:
+#     try:
+#         conn = psycopg2.connect(host='localhost', database='fastpost',
+#                                 user='exsan', password='ehsan2404',
+#                                 cursor_factory=RealDictCursor)
+#         cursor = conn.cursor()
+#         print("database connection successfull")
+#         break
+#     except Exception as error:
+#         print("Connection failed")
+#         print("Error: ", error)
+#         time.sleep(2)
 
 
 
 
-my_posts = [{"title": "title of post 1", "content": "content of post 1", "id": 1},
-            {"title": "favorite charecter", "content": "I LOVE ZLATAN", "id": 2}]
+# my_posts = [{"title": "title of post 1", "content": "content of post 1", "id": 1},
+#             {"title": "favorite charecter", "content": "I LOVE ZLATAN", "id": 2}]
 
 
-def find_post(id):
-    for p in my_posts:
-        if p['id'] == id:
-            return p
+# def find_post(id):
+#     for p in my_posts:
+#         if p['id'] == id:
+#             return p
 
 
-def find_index_post(id):
-    for i, p in enumerate(my_posts):
-        if p['id'] == id:
-            return i
+# def find_index_post(id):
+#     for i, p in enumerate(my_posts):
+#         if p['id'] == id:
+#             return i
