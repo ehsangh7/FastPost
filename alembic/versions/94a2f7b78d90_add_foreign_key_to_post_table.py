@@ -23,7 +23,7 @@ def upgrade():
                             referent_table="users",
                             local_cols=["owner_id"],
                             remote_cols=["id"],
-                            ondelete="CASECADE"
+                            ondelete="CASCADE"
                             )
     pass
 
